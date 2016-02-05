@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Questions</title>
+</head>
+<body>
+{% for questionset in data %}
+	<p class = "question">{{forloop.counter}}. {{questionset.question}} </p>
+	{% for choice in questionset.choices %}
+		<label><input type='radio' name = "answer{{forloop.parentloop.counter}}"/>{{choice}}</label>
+		<br>
+	{% endfor %}
+	<br>
+{% endfor %}
+</body>
+</html>

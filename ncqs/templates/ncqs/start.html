@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <title> Questions</title>
+    <script type='text/javascript' src = "{% static 'ncqs/js/jquery-2.2.0.min.js' %}"></script>
+    <script type ='text/javascript'>
+    $(document).ready(function(){
+        var questions = null;
+        var answers = {};
+        var current = 0;
+        $.getJSON( "/ncqs/fetch-questions/", function( data ) {
+            questions = data["data"];
+            console.log(questions);
+            setupQuestion(0);
+        });
+        var setupQuestion = function(index){
+            // console.log("printing questions inside setupQuestion"+questions);
+            // console.log(questions);
+            // console.log(index);
+            questionString = questions[index]['question'];
+            $('#question_statement').html(questionString);
+            $('#question_no').html(""+(index+1));
+            choiceArray = questions[index]['choices'];
+            divChoices = $('#div_choices').children();
+            for(i=0; i<4; i++)
+            {
+                divChoices.eq(i*2).val(choiceArray[i]);
+                divChoices.eq(i*2).prop('checked', false);
+                divChoices.eq(i*2+1).html(choiceArray[i]);
+            }
+            if(index.toString() in answers)
+            {
+                $('.choice_class[value='+answers[index.toString()]+']').prop("checked", true);                
+            }
+        }
+        $('.choice_class').on("change", function(){
+            // add an ajax post to save this answer
+            // can be over written
+            radio_button = $(this);
+            answer = $(this).val();
+            $.post('/ncqs/answer/', {"question_no":current, "answer":answer}, function(data){
+                try{
+                        console.log(data+" was received");
+                        json = $.parseJSON(data);
+                        if(json['success'])
+                        {
+                            answers[current.toString()] = answer;
+                            console.log("saved!");
+                            console.log(answers);
+                        }
+                        else
+                        {
+                            //deselect this checkbox
+                            $(this).prop("checked", false);
+                            alert("error: server returned failure");
+                        }
+                }catch(ee)
+                {
+                    $(this).prop("checked", false);
+                    alert("exception:"+ee+'\nfor data: '+data);
+                }
+            }).fail(function(xhrObject, status, exc){
+                radio_button.prop("checked", false);
+                alert("error: could not save to server");
+                console.log(status+";"+exc);
+                console.log(xhrObject);  
+            });
+            console.log($(this).val());
+        });
+        
+        $('#button_first').on("click", function(){
+            current = 0;
+            setupQuestion(current);
+        });
+        $('#button_previous').on("click", function(){
+            if(current!=0)
+            {   
+                current = current - 1;
+                setupQuestion(current);
+            }
+        });
+        $('#button_next').on("click", function(){
+            total_questions =questions.length; 
+            if(current!=total_questions-1)
+            {
+                current = current + 1;
+                setupQuestion(current);
+                
+            }
+        });
+        $('#button_last').on("click", function(){
+            total_questions =questions.length; 
+            current = total_questions-1;
+            setupQuestion(current);
+        });
+
+    });
+    </script>
+</head>
+<body>
+    <div id = 'div_questionset'>
+        <p class = "question" id = "question_no"></p>
+        <p class = "question" id = 'question_statement'></p>
+        <div id='div_choices'>
+            <input id ='choice_1' type='radio' class = 'choice_class' name = "choices"/><label for='choice_1'>1</label>
+            <input id ='choice_2' type='radio' class = 'choice_class' name = "choices"/><label for='choice_2'>2</label>
+            <input id ='choice_3' type='radio' class = 'choice_class' name = "choices"/><label for='choice_3'>3</label>
+            <input id ='choice_4' type='radio' class = 'choice_class' name = "choices"/><label for='choice_4'>4</label>
+        </div>
+    </div>
+    <div id ='div_controlset'>
+    <input type='button' id='button_first' value = '<<'/>
+    <input type='button' id='button_previous' value = '<'/>
+    <input type='button' id='button_next' value = '>'/>
+    <input type='button' id='button_last' value = '>>'/>
+    </div>
+    <input type='button' id='button_end' value = 'End'/>
+</body>
+</html>

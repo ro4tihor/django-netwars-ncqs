@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<title>Register with NCQs</title>
+	</head>
+	<body>
+		<form action='/ncqs/register/' method = 'POST'>
+			{%csrf_token%}
+			<table>
+			{{form}}
+			</table>
+			<input type='submit' value='register'/>
+		</form>
+
+	</body>	
+</html>

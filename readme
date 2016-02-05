@@ -1,0 +1,10 @@
+The NCQs (pictinc.org) web app using django framework and MySQL database!
+
+Installation instructions
+
+1. install pip
+2. make a virtual environment ( for steps refer to wordify-1 repository )
+3. install all the dependencies given in requirements.txt file
+4. if there are errors ( and there will be!), you might want to install pydev libraries for python and other developer libraries (search for the error on internet)
+
+
