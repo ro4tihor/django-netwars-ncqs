@@ -68,6 +68,7 @@
             });
             console.log($(this).val());
         });
+
         
         $('#button_first').on("click", function(){
             current = 0;
@@ -93,6 +94,29 @@
             total_questions =questions.length; 
             current = total_questions-1;
             setupQuestion(current);
+        });
+        $('#button_end').on("click", function(){
+            //ask for confirmation first
+            len = answers.length;
+            allAnswered = true;
+            for(i = 0; i<len; i++)
+            {
+                if(i.toString() in answers)
+                    continue;
+                else
+                {
+                    allAnswered = false;
+                    break;
+                }
+            }
+            if(!allAnswered)
+            {
+                // show a confirmation message or append this text
+                // to the above confirmation message
+            }
+            $.getJSON('/ncqs/end', answers, function(data){
+                window.location.replace(data['next']);
+            });
         });
 
     });

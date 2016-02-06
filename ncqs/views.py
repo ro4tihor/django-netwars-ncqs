@@ -122,3 +122,18 @@ def record_answer_view(request):
     qp_object.user_answer = answer
     qp_object.save();
     return HttpResponse(dumps({"success":True}));
+
+def end_view(request):
+    return JsonResponse({'next':reverse('report')});
+def report_view(request):
+    marks = get_user_marks(request.user);
+    return HttpResponse("your marks: "+str(marks))
+def get_user_marks(user):
+    questions = QuestionPaper.objects.all().filter(user = user)
+    marks = 0
+    for question in questions:
+        user_answer = question.user_answer
+        correct_answer = question.question.choice_correct
+        if user_answer == correct_answer:
+            marks = marks + 1;
+    return marks;

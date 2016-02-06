@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^fetch-questions/$', views.fetch_questions_ajax, name = 'fetch_questions'),
     url(r'^delete/(?P<username>\w+)/$', views.delete_record_view, name='delete'),
     url(r'^answer/$', views.record_answer_view, name = 'answer'),
+    url(r'^end/$', views.end_view, name='end'),
+    url(r'^report/$', views.report_view, name='report'),
 ]
