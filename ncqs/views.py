@@ -10,6 +10,7 @@ from models import Question, QuestionPaper
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from json import dumps
+from redis import StrictRedis
 
 # Create your views here.
 
@@ -103,7 +104,17 @@ def fetch_questions_ajax(request):
     # add a session variable here that keeps track whether we are making
     # the paper for the first time or not, otherwise every page refresh
     # will result in making of new question paper for this particular user
+    # another solution is to check in start whether we have received a POST or GET
     data = {"data":question_list}
+
+    # start the timer!
+    username = current_user.username
+    key = settings.NCQS_REDIS_PREFIX+username
+    seconds = settings.NCQS_TOTAL_TIME
+    print "now setting the key "+key+", which will expire in "+str(seconds)+" seconds.";
+    rd = StrictRedis()
+    rd.setex(key, seconds, "1")
+
     return JsonResponse(data);
 
 def delete_record_view(request, username='murtraja'):
@@ -137,3 +148,6 @@ def get_user_marks(user):
         if user_answer == correct_answer:
             marks = marks + 1;
     return marks;
+
+def timer_view(request):
+    return render(request, 'ncqs/timer.html')

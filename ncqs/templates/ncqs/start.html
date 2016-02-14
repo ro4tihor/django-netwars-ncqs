@@ -4,6 +4,8 @@
 <head>
     <title> Questions</title>
     <script type='text/javascript' src = "{% static 'ncqs/js/jquery-2.2.0.min.js' %}"></script>
+    <script type='text/javascript' src = "{% static 'ncqs/js/jquery.plugin.js' %}"></script>
+    <script type='text/javascript' src = "{% static 'ncqs/js/jquery.countdown.js' %}"></script>
     <script type ='text/javascript'>
     $(document).ready(function(){
         var questions = null;
@@ -118,11 +120,19 @@
                 window.location.replace(data['next']);
             });
         });
+        var getTime = function(){
+            $.getJSON('http://127.0.0.1:7379/TTL/ncqs:murtraja', function(data){
+                //json = JSON.parse(data);
+                $('#time_left').html(data['TTL']);
+            });
+        }
+        setInterval(getTime, 500);
 
     });
     </script>
 </head>
 <body>
+    <p id='time_left'></p>
     <div id = 'div_questionset'>
         <p class = "question" id = "question_no"></p>
         <p class = "question" id = 'question_statement'></p>

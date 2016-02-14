@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^answer/$', views.record_answer_view, name = 'answer'),
     url(r'^end/$', views.end_view, name='end'),
     url(r'^report/$', views.report_view, name='report'),
+    url(r'^timer-test/$', views.timer_view, name  = 'timer'),
 ]
